@@ -61,4 +61,8 @@ class ErrorController extends Controller
         return $this->render('index');
     }
     
+    public function actionError(){
+        return $this->render('index');
+    }
+    
 }
