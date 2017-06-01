@@ -37,8 +37,9 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/store/index']],
-            ['label' => 'About', 'url' => ['/store/about']],
-            ['label' => 'Contact', 'url' => ['/store/contact']],
+            Yii::$app->user->isGuest ? '' : ['label' => 'Generate Bill', 'url' => ['/store/about']],
+            Yii::$app->user->isGuest ? ['label' => 'About', 'url' => ['/store/about']] : ['label' => 'Update Stock', 'url' => ['/store/contact']],
+            Yii::$app->user->isGuest ? ['label' => 'Contact', 'url' => ['/store/contact']] : ['label' => 'Create User', 'url' => ['/store/contact']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/store/login']]
             ) : (
