@@ -36,7 +36,7 @@ $this->title = 'My Yii Application';
                 </div>
 
                 <div class="item">
-                    <img src="ny.jpg" alt="New york" style="width:100%;">
+                    <!--<img src="ny.jpg" alt="New york" style="width:100%;">-->
                     <?= Html::img('@web/images/ny.jpg', ['alt' => 'New york']); ?>
                 </div>
             </div>
