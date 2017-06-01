@@ -1,5 +1,9 @@
 <?php
 
 return [
-    'adminEmail' => 'admin@example.com',
+    'adminEmail' => 'amitvarmaone@gmail.com',
+    'status' => [
+        'active' => 1,
+        'inactive' => 2,
+    ],
 ];
