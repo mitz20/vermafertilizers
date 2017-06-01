@@ -67,7 +67,6 @@ class StoreController extends Controller {
      */
     public function actionLogin()
     {
-//        var_dump(Yii::$app->user->isGuest);die;
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
