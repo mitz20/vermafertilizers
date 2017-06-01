@@ -38,6 +38,7 @@ AppAsset::register($this);
         'items' => [
             ['label' => 'Home', 'url' => ['/store/index']],
             Yii::$app->user->isGuest ? '' : ['label' => 'Generate Bill', 'url' => ['/store/about']],
+            Yii::$app->user->isGuest ? '' : ['label' => 'View Stock', 'url' => ['/store/about']],
             Yii::$app->user->isGuest ? ['label' => 'About', 'url' => ['/store/about']] : ['label' => 'Update Stock', 'url' => ['/store/contact']],
             Yii::$app->user->isGuest ? ['label' => 'Contact', 'url' => ['/store/contact']] : ['label' => 'Create User', 'url' => ['/store/contact']],
             Yii::$app->user->isGuest ? (
