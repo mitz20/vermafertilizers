@@ -32,6 +32,8 @@ class LoginForm extends Model
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
+            [['username', 'password'], 'trim'],
+            [['username','password'],'match', 'pattern' => '/^[a-zA-Z0-9 _-]+$/', 'message' => 'This field can only contain alphanumeric characters, underscores and dashes.'],
         ];
     }
 
