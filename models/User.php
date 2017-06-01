@@ -2,25 +2,27 @@
 
 namespace app\models;
 
-use Yii;
-use app\models\Owner;
+class User extends \yii\db\ActiveRecord implements \yii\web\IdentityInterface {
 
-class User extends \yii\base\Object implements \yii\web\IdentityInterface {
+    public function beforeSave($insert) {
+        if (parent::beforeSave($insert)) {
+            if ($this->isNewRecord) {
+                $this->auth_key = \Yii::$app->security->generateRandomString();
+            }
+            return true;
+        }
+        return false;
+    }
 
-    public $id;
-    public $username;
-    public $password;
-    public $email;
-    public $active;
-    public $authKey;
-    public $accessToken;
-    private static $user;
+    public static function tableName() {
+        return 'users';
+    }
 
     /**
      * @inheritdoc
      */
     public static function findIdentity($id) {
-        return isset(self::$user[$id]) ? new static(self::$user[$id]) : null;
+        return static::findOne($id);
     }
 
     /**
@@ -28,10 +30,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface {
      */
     public static function findIdentityByAccessToken($token, $type = null) {
 
-        if (self::$user['accessToken'] === $token) {
-            return new static(self::$user);
-        }
-        return null;
+//        return static::findOne(['access_token' => $token]);
     }
 
     /**
@@ -41,17 +40,10 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface {
      * @return static|null
      */
     public static function findByUsername($username) {
-        $user = Owner::find()
-                ->where([
+        return static::findOne([
                     'username' => $username,
-                    'active' => Yii::$app->params['status']['active']
-                ])
-                ->one();
-        if ($user) {
-            return new static($user->toArray());
-        }
-
-        return null;
+                    'active' => 1,
+        ]);
     }
 
     /**
@@ -65,14 +57,14 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface {
      * @inheritdoc
      */
     public function getAuthKey() {
-        return $this->authKey;
+        return $this->auth_key;
     }
 
     /**
      * @inheritdoc
      */
     public function validateAuthKey($authKey) {
-        return $this->authKey === $authKey;
+        return $this->getAuthKey() === $authKey;
     }
 
     /**
