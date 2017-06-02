@@ -8,6 +8,8 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Stock;
+use app\models\AddProductForm;
 
 class StoreController extends Controller {
 
@@ -65,8 +67,7 @@ class StoreController extends Controller {
      *
      * @return string
      */
-    public function actionLogin()
-    {
+    public function actionLogin() {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -76,7 +77,7 @@ class StoreController extends Controller {
             return $this->goBack();
         }
         return $this->render('login', [
-            'model' => $model,
+                    'model' => $model,
         ]);
     }
 
@@ -115,6 +116,40 @@ class StoreController extends Controller {
      */
     public function actionAbout() {
         return $this->render('about');
+    }
+
+    public function actionAddProduct() {
+        $mAddProduct = new AddProductForm();
+        if ($mAddProduct->load(Yii::$app->request->post()) && $mAddProduct->validate()) {
+            $product = Stock::find()
+                    ->where(['product_id' => $mAddProduct->product_id . '1'])
+                    ->one();
+            if (!$product) {
+                Yii::$app->session->setFlash('error', 'Product already exists.');
+                return $this->goBack();
+            }
+            $mStock = new Stock();
+            $mStock->name = $mAddProduct->name;
+            $mStock->product_id = $mAddProduct->product_id;
+            $mStock->price_per_unit = $mAddProduct->price;
+            $mStock->units = $mAddProduct->units;
+            $mStock->is_sold = 1;
+            try {
+                $mStock->save(false);
+            } catch (Exception $ex) {
+                Yii::$app->session->setFlash('error', $ex->getMessage());
+                return $this->goBack();
+            }
+            Yii::$app->session->setFlash('success', 'Item added successfully.');
+        }
+        return $this->render('addProduct', [
+                    'model' => $mAddProduct,
+        ]);
+    }
+
+    public function actionViewStock() {
+        $modelStock = new Stock;
+        return $this->render('viewStock');
     }
 
 }
