@@ -136,7 +136,7 @@ class StoreController extends Controller {
             $mStock->product_id = $mAddProduct->product_id;
             $mStock->price_per_unit = $mAddProduct->price;
             $mStock->units = $mAddProduct->units;
-            $mStock->is_sold = 1;
+            $mStock->is_active = 1;
             try {
                 if (!$mStock->save(false)) {
                     Yii::$app->session->setFlash('error', 'Product cannot be saved.');
@@ -157,7 +157,7 @@ class StoreController extends Controller {
 
         $search = new SearchForm();
 
-        $query = Stock::find()->where(['is_sold' => '1']);
+        $query = Stock::find()->where(['is_active' => '1']);
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count()]);
         $models = $query->offset($pages->offset)
