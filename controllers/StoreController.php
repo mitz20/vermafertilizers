@@ -6,6 +6,7 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
+use yii\data\Pagination;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Stock;
@@ -152,8 +153,21 @@ class StoreController extends Controller {
     }
 
     public function actionViewStock() {
-        $modelStock = new Stock;
-        return $this->render('viewStock');
+        $query = Stock::find()->where(['is_sold' => '1']);
+        $countQuery = clone $query;
+        $pages = new Pagination(['totalCount' => $countQuery->count()]);
+        $models = $query->offset($pages->offset)
+                ->limit($pages->limit)
+                ->all();
+
+
+//        echo '<pre>';
+//        print_r($models);
+//        die;
+        return $this->render('viewStock', [
+                    'models' => $models,
+                    'pages' => $pages,
+        ]);
     }
 
     public function actionIsPidUnique() {
