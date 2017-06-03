@@ -10,3 +10,9 @@ and open the template in the editor.
 .carousel .item {
   height: 300px;
 }
+.panel-heading {
+    padding: 20px !important;
+}
+.main-search {
+    margin-right: -20px !important;
+}

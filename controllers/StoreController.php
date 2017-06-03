@@ -11,6 +11,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Stock;
 use app\models\AddProductForm;
+use app\models\SearchForm;
 
 class StoreController extends Controller {
 
@@ -153,6 +154,9 @@ class StoreController extends Controller {
     }
 
     public function actionViewStock() {
+
+        $search = new SearchForm();
+
         $query = Stock::find()->where(['is_sold' => '1']);
         $countQuery = clone $query;
         $pages = new Pagination(['totalCount' => $countQuery->count()]);
@@ -167,6 +171,7 @@ class StoreController extends Controller {
         return $this->render('viewStock', [
                     'models' => $models,
                     'pages' => $pages,
+                    'search' => $search,
         ]);
     }
 
