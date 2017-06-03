@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     ],
                         ]);
                         ?>
-                        <?= $form->field($search, 'search')->textInput(['style' => 'text-transform: uppercase']) ?>
+                        <?= $form->field($search, 'search')->textInput() ?>
                         <?php ActiveForm::end(); ?>
                     </span>
                 </div>

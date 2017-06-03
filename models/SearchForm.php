@@ -20,7 +20,8 @@ class SearchForm extends Model
     public function rules()
     {
         return [
-            [['product_id'],'match', 'pattern' => '/^[a-zA-Z0-9]+$/'],
+            ['search', 'trim'],
+            [['search'],'match', 'pattern' => '/^[a-zA-Z0-9]+$/'],
             ['search', 'string', 'length' => [1, 30]],
         ];
     }
