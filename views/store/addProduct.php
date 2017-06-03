@@ -18,19 +18,24 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php echo Yii::$app->session['success']; ?>
         </div>
     <?php elseif (Yii::$app->session->hasFlash('error')): ?>
-        <div class="alert alert-success">
+        <div class="alert alert-danger">
             <?php echo Yii::$app->session['error']; ?>
         </div>
     <?php endif; ?>
 
-    <p>Please fill out the following fields to add item:</p>
+    <p>Please fill out the following fields to add product:</p>
 
     <?php
     $form = ActiveForm::begin([
-                'id' => 'add-item-form',
+                'id' => 'add-product-form',
+                'enableAjaxValidation' => FALSE,
+                'validateOnSubmit' => TRUE,
                 'layout' => 'horizontal',
                 'method' => 'post',
                 'action' => Url::to(['store/add-product']),
+                'options' => [
+                    'ajaxUrl' => Url::to(['store/is-pid-unique']),
+                ],
                 'fieldConfig' => [
                     'template' => "{label}\n<div class=\"col-lg-3\">{input}</div>\n<div class=\"col-lg-7\">{error}</div>",
                     'labelOptions' => ['class' => 'col-lg-2 control-label'],

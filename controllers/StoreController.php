@@ -121,12 +121,13 @@ class StoreController extends Controller {
     public function actionAddProduct() {
         $mAddProduct = new AddProductForm();
         if ($mAddProduct->load(Yii::$app->request->post()) && $mAddProduct->validate()) {
+            $mAddProduct->product_id = strtoupper($mAddProduct->product_id);
             $product = Stock::find()
-                    ->where(['product_id' => $mAddProduct->product_id . '1'])
+                    ->where(['product_id' => $mAddProduct->product_id])
                     ->one();
-            if (!$product) {
+            if ($product) {
                 Yii::$app->session->setFlash('error', 'Product already exists.');
-                return $this->goBack();
+                return $this->refresh();
             }
             $mStock = new Stock();
             $mStock->name = $mAddProduct->name;
@@ -135,12 +136,15 @@ class StoreController extends Controller {
             $mStock->units = $mAddProduct->units;
             $mStock->is_sold = 1;
             try {
-                $mStock->save(false);
+                if (!$mStock->save(false)) {
+                    Yii::$app->session->setFlash('error', 'Product cannot be saved.');
+                    return $this->refresh();
+                }
             } catch (Exception $ex) {
                 Yii::$app->session->setFlash('error', $ex->getMessage());
-                return $this->goBack();
+                return $this->refresh();
             }
-            Yii::$app->session->setFlash('success', 'Item added successfully.');
+            Yii::$app->session->setFlash('success', 'Product added successfully.');
         }
         return $this->render('addProduct', [
                     'model' => $mAddProduct,
@@ -150,6 +154,19 @@ class StoreController extends Controller {
     public function actionViewStock() {
         $modelStock = new Stock;
         return $this->render('viewStock');
+    }
+
+    public function actionIsPidUnique() {
+        $mAddProductForm = new AddProductForm();
+        if (Yii::$app->request->isAjax && $mAddProductForm->load(Yii::$app->request->post()) && $mAddProductForm->validate()) {
+            $product = Stock::find()
+                    ->where(['product_id' => $mAddProductForm->product_id])
+                    ->one();
+            ($product == NULL) ? print_r('1') : print_r('0');
+            die;
+        }
+        print_r('1');
+        die;
     }
 
 }
