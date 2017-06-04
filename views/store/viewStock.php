@@ -71,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'nextPageLabel' => 'Next',
                         'prevPageLabel' => 'Previous',
                         'hideOnSinglePage' => FALSE,
-                        'maxButtonCount' => 5
+                        'maxButtonCount' => 10
                     ]);
                     ?>
                 </div>
