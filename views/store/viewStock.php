@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         </thead>
                         <tbody>
                             <?php foreach ($models as $key => $model) { ?>
-                                <tr class="<?php echo ($key % 2) ? 'odd gradeA' : 'even gradeA' ?>">
+                                <tr class="gradeA">
                                     <td class="center"><?= $key + 1 ?></td>
                                     <td class="center"><a href="<?= Url::to(['store/view-product-details', '__pid' => base64_encode($model->product_id)]); ?>"><?= $model->product_id ?></a></td>
                                     <td class="center"><?= $model->name ?></td>
