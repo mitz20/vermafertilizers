@@ -30,7 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <span class="col-lg-6 adjust-height">
+                    <span class="col-lg-6 mt-7">
                         Last updated stock details 
                     </span>
                     <span class="pull-right col-lg-6">
