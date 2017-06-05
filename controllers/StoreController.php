@@ -7,11 +7,15 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\data\Pagination;
+//form models
 use app\models\LoginForm;
 use app\models\ContactForm;
-use app\models\Stock;
 use app\models\ProductForm;
 use app\models\SearchForm;
+use app\models\CreateUserForm;
+//db models
+use app\models\Stock;
+use app\models\User;
 
 class StoreController extends Controller {
 
@@ -90,7 +94,6 @@ class StoreController extends Controller {
      */
     public function actionLogout() {
         Yii::$app->user->logout();
-
         return $this->goHome();
     }
 
@@ -120,36 +123,51 @@ class StoreController extends Controller {
         return $this->render('about');
     }
 
+    public function actionCreateUser() {
+        $mCreateUserForm = new CreateUserForm;
+        if (Yii::$app->request->isPost && $mCreateUserForm->load(Yii::$app->request->post()) && $mCreateUserForm->validate()) {
+            $user = new User();
+            $user->username = $mCreateUserForm->username;
+            $user->password = $mCreateUserForm->password;
+            $user->email = $mCreateUserForm->email;
+            $user->active = 1;
+            try {
+                ($user->save()) ? (Yii::$app->session->setFlash('success', 'User created successfully.')) : (Yii::$app->session->setFlash('error', 'User cannot be created.'));
+            } catch (Exception $ex) {
+                Yii::$app->session->setFlash('error', $ex->getMessage());
+            }
+        }
+        return $this->render('createUser', [
+                    'model' => $mCreateUserForm,
+        ]);
+    }
+
     public function actionAddProduct() {
-        $mAddProduct = new ProductForm();
-        if ($mAddProduct->load(Yii::$app->request->post()) && $mAddProduct->validate()) {
-            $mAddProduct->product_id = strtoupper($mAddProduct->product_id);
+        $mProductForm = new ProductForm();
+        if (Yii::$app->request->isPost && $mProductForm->load(Yii::$app->request->post()) && $mProductForm->validate()) {
+            $mProductForm->product_id = strtoupper($mProductForm->product_id);
             $product = Stock::find()
-                    ->where(['product_id' => $mAddProduct->product_id])
+                    ->where(['product_id' => $mProductForm->product_id])
                     ->one();
             if ($product) {
                 Yii::$app->session->setFlash('error', 'Product already exists.');
-                return $this->refresh();
+                return $this->redirect(Yii::$app->request->referrer);
             }
             $mStock = new Stock();
-            $mStock->name = $mAddProduct->name;
-            $mStock->product_id = $mAddProduct->product_id;
-            $mStock->price_per_unit = $mAddProduct->price;
-            $mStock->units = $mAddProduct->units;
+            $mStock->name = $mProductForm->name;
+            $mStock->product_id = $mProductForm->product_id;
+            $mStock->price_per_unit = $mProductForm->price;
+            $mStock->units = $mProductForm->units;
             $mStock->is_active = 1;
             try {
-                if (!$mStock->save(false)) {
-                    Yii::$app->session->setFlash('error', 'Product cannot be saved.');
-                    return $this->refresh();
-                }
+                ($mStock->save()) ? (Yii::$app->session->setFlash('success', 'Product added successfully.')) : (Yii::$app->session->setFlash('error', 'Product cannot be saved.'));
             } catch (Exception $ex) {
                 Yii::$app->session->setFlash('error', $ex->getMessage());
-                return $this->refresh();
             }
-            Yii::$app->session->setFlash('success', 'Product added successfully.');
+            return $this->redirect(Yii::$app->request->referrer);
         }
         return $this->render('addProduct', [
-                    'model' => $mAddProduct,
+                    'model' => $mProductForm,
         ]);
     }
 
@@ -210,46 +228,51 @@ class StoreController extends Controller {
     }
 
     public function actionUpdateProduct() {
-        if (Yii::$app->request->isPost) {
-            $mProductForm = new ProductForm();
-            if ($mProductForm->load(Yii::$app->request->post()) && $mProductForm->validate()) {
-                $stock = Stock::find()
-                        ->where(['product_id' => $mProductForm->product_id])
-                        ->andWhere(['is_active' => '1'])
-                        ->one();
-                if($stock){
-                    $stock->name = $mProductForm->name;
-                    $stock->units = $mProductForm->units;
-                    $stock->price_per_unit = $mProductForm->price;
-                    
-                    try{
-                        if(!$stock->save()){
-                            Yii::$app->session->setFlash('error', 'Product details cannot be updated.');
-                        }else{
-                            Yii::$app->session->setFlash('success', 'Product details updated successfully.');
-                        }
-                    } catch (Exception $ex) {
-                        Yii::$app->session->setFlash('error', $ex->getMessage());
-                    }
-                }else{
-                    Yii::$app->session->setFlash('error', 'Product not found in database.');
+        $mProductForm = new ProductForm();
+        if (Yii::$app->request->isPost && $mProductForm->load(Yii::$app->request->post()) && $mProductForm->validate()) {
+            $stock = Stock::find()
+                    ->where(['product_id' => $mProductForm->product_id])
+                    ->andWhere(['is_active' => '1'])
+                    ->one();
+            if ($stock) {
+                $stock->name = $mProductForm->name;
+                $stock->units = $mProductForm->units;
+                $stock->price_per_unit = $mProductForm->price;
+
+                try {
+                    ($stock->save()) ? (Yii::$app->session->setFlash('success', 'Product details updated successfully.')) : (Yii::$app->session->setFlash('error', 'Product details cannot be updated.'));
+                } catch (Exception $ex) {
+                    Yii::$app->session->setFlash('error', $ex->getMessage());
                 }
             } else {
-                Yii::$app->session->setFlash('error', 'Problem while validating form.');
+                Yii::$app->session->setFlash('error', 'Product not found in database.');
             }
         } else {
-            Yii::$app->session->setFlash('error', 'No data to update.');
+            Yii::$app->session->setFlash('error', 'Incorrect or No data available.');
         }
         return $this->redirect(Yii::$app->request->referrer);
     }
 
     public function actionIsPidUnique() {
-        $mAddProductForm = new ProductForm();
+        $mProductForm = new ProductForm();
         if (Yii::$app->request->isAjax && $mProductForm->load(Yii::$app->request->post()) && $mProductForm->validate()) {
             $product = Stock::find()
                     ->where(['product_id' => $mProductForm->product_id])
                     ->one();
             ($product == NULL) ? print_r('1') : print_r('0');
+            die;
+        }
+        print_r('1');
+        die;
+    }
+
+    public function actionIsUsernameUnique() {
+        $mCreateUserForm = new CreateUserForm();
+        if (Yii::$app->request->isAjax && $mCreateUserForm->load(Yii::$app->request->post()) && $mCreateUserForm->validate()) {
+            $user = User::find()
+                    ->where(['username' => $mCreateUserForm->username])
+                    ->one();
+            ($user == NULL) ? print_r('1') : print_r('0');
             die;
         }
         print_r('1');

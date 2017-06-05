@@ -4,10 +4,10 @@
  * and open the template in the editor.
  */
 $(document).ready(function (event) {
-    $('#add-product-form').on('beforeSubmit',function(e) {
+    $('#add-product-form').on('beforeSubmit', function (e) {
         e.preventDefault();
         if ($(this).find('.has-error').length > 0) {
-            alert('error');
+            console.log('error');
             return false;
         }
         var form = $(this);
@@ -25,20 +25,47 @@ $(document).ready(function (event) {
             proClass = prodObj.attr('class');
             newclass = proClass.replace('has-success', 'has-error');
             prodObj.attr('class', newclass);
-            $('.field-addproductform-product_id .help-block').html('Product Id must be unique.');
+            $('.field-addproductform-product_id .help-block').html('Product Id must be unique.Try a different one.');
             return false;
         }
         return true;
     });
-    
-    $('#product-edit-button').click(function(){
+
+    $('#create-user-form').on('beforeSubmit', function (e) {
+        e.preventDefault();
+        if ($(this).find('.has-error').length > 0) {
+            console.log('error');
+            return false;
+        }
+        var form = $(this);
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: form.attr('ajaxUrl'),
+            data: form.serialize(),
+            success: function (response) {
+                window.response = response;
+            }
+        });
+        if (window.response == 0) {
+            prodObj = $('.field-createuserform-username');
+            proClass = prodObj.attr('class');
+            newclass = proClass.replace('has-success', 'has-error');
+            prodObj.attr('class', newclass);
+            $('.field-createuserform-username .help-block').html('Username must be unique. Try a different one.');
+            return false;
+        }
+        return true;
+    });
+
+    $('#product-edit-button').click(function () {
 //        alert();
         $('#productform-name').removeAttr('disabled');
         $('#productform-units').removeAttr('disabled');
         $('#productform-price').removeAttr('disabled');
-        $('#product-edit-button').css('display','none');
+        $('#product-edit-button').css('display', 'none');
         $('#product-submit-button').removeAttr('style');
     });
-    
+
 });
 
