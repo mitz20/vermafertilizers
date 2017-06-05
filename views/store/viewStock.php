@@ -43,12 +43,11 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'method' => 'post',
                                     'action' => Url::to(['store/view-stock']),
                                     'fieldConfig' => [
-                                        'template' => "{label}\n<div class=\"col-lg-8 main-search\">{input}</div><span class=\"input-group-btn\"><button class=\"btn btn-default\" type=\"submit\"><i class=\"fa fa-search\"></i></button></span>",
-                                        'labelOptions' => ['class' => 'col-lg-2 control-label'],
+                                        'template' => "<div class=\"input-group main-search pull-right\">{input}<span class=\"input-group-btn\"><button class=\"btn btn-default\" type=\"submit\"><i class=\"fa fa-search\"></i></button></span></div>",
                                     ],
                         ]);
                         ?>
-                        <?= $form->field($search, 'search')->textInput() ?>
+                        <?= $form->field($search, 'search')->textInput(['placeholder' => 'Search'])->label(FALSE) ?>
                         <?php ActiveForm::end(); ?>
                     </span>
                 </div>
