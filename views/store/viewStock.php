@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <td class="center"><?= $model->units ?></td>
                                     <td class="center"><?= $model->price_per_unit ?></td>
                                     <td class="center" align="center">
-                                        <?php if (in_array($model->product_id, Yii::$app->session->get('cart'))) { ?>
+                                        <?php if (Yii::$app->session->get('cart') && in_array($model->product_id, Yii::$app->session->get('cart'))) { ?>
                                             <a class="btn btn-danger btn-sm btn-width-md remove-from-cart" href="<?= Url::to(['store/update-cart', '__pid' => base64_encode($model->product_id), 'action' => 'remove']); ?>">Remove from cart</a>
                                         <?php } else { ?>
                                             <a class="btn btn-success btn-sm btn-width-md add-to-cart" href="<?= Url::to(['store/update-cart', '__pid' => base64_encode($model->product_id), 'action' => 'add']); ?>">Add to cart</a>
