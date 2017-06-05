@@ -23,3 +23,13 @@ and open the template in the editor.
 .btn-width{
     width: 100px;
 }
+.btn-sm.btn-width-md {
+    width: 116px;
+}
+th.cart-action {
+    text-align: center;
+}
+.go-to-cart {
+    margin-left: -32px;
+    margin-top: 20px;
+}

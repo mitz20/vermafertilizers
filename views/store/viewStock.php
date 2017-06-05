@@ -62,32 +62,45 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <th>Product Name</th>
                                 <th>Units</th>
                                 <th>Price Per Unit</th>
-                                <th>Action</th>
+                                <th class="center cart-action" text-align="center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($models as $key => $model) { ?>
                                 <tr class="<?php echo ($key % 2) ? 'odd gradeA' : 'even gradeA' ?>">
                                     <td class="center"><?= $key + 1 ?></td>
-                                    <td class="center"><a href="<?= Url::to(['store/view-product-details', '__id' => base64_encode($model->product_id)]); ?>"><?= $model->product_id ?></a></td>
+                                    <td class="center"><a href="<?= Url::to(['store/view-product-details', '__pid' => base64_encode($model->product_id)]); ?>"><?= $model->product_id ?></a></td>
                                     <td class="center"><?= $model->name ?></td>
                                     <td class="center"><?= $model->units ?></td>
                                     <td class="center"><?= $model->price_per_unit ?></td>
-                                    <td class="center"><a class="btn btn-success btn-sm" href="<?= Url::to(['store/view-product-details', '__id' => base64_encode($model->product_id)]); ?>">Add to cart</a></td>
+                                    <td class="center" align="center">
+                                        <?php if (in_array($model->product_id, Yii::$app->session->get('cart'))) { ?>
+                                            <a class="btn btn-danger btn-sm btn-width-md remove-from-cart" href="<?= Url::to(['store/update-cart', '__pid' => base64_encode($model->product_id), 'action' => 'remove']); ?>">Remove from cart</a>
+                                        <?php } else { ?>
+                                            <a class="btn btn-success btn-sm btn-width-md add-to-cart" href="<?= Url::to(['store/update-cart', '__pid' => base64_encode($model->product_id), 'action' => 'add']); ?>">Add to cart</a>
+                                        <?php } ?>
+                                    </td>
                                 </tr>
                             <?php } ?>
                         </tbody>
                     </table>
                     <!-- /.table-responsive -->
-                    <?php
-                    echo LinkPager::widget([
-                        'pagination' => $pages,
-                        'nextPageLabel' => 'Next',
-                        'prevPageLabel' => 'Previous',
-                        'hideOnSinglePage' => FALSE,
-                        'maxButtonCount' => 10
-                    ]);
-                    ?>
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <?php
+                            echo LinkPager::widget([
+                                'pagination' => $pages,
+                                'nextPageLabel' => 'Next',
+                                'prevPageLabel' => 'Previous',
+                                'hideOnSinglePage' => FALSE,
+                                'maxButtonCount' => 10
+                            ]);
+                            ?>
+                        </div>
+                        <div class="col-lg-offset-2 col-lg-2">
+                            <a class="btn btn-warning btn-sm btn-width-md go-to-cart" href="<?= Url::to(['store/cart']); ?>">Go to cart</a>
+                        </div>
+                    </div>
                 </div>
                 <!-- /.panel-body -->
             </div>

@@ -33,14 +33,17 @@ AppAsset::register($this);
             'class' => 'navbar-inverse navbar-fixed-top',
         ],
     ]);
+    
+    $cart = count(Yii::$app->session->get('cart')) ? count(Yii::$app->session->get('cart')) : 'Empty';
+    
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/store/index']],
-            Yii::$app->user->isGuest ? '' : ['label' => 'Cart', 'url' => ['/store/about']],
+            Yii::$app->user->isGuest ? ['label' => 'Contact', 'url' => ['/store/contact']] : ['label' => 'Create User', 'url' => ['/store/create-user']],
             Yii::$app->user->isGuest ? '' : ['label' => 'Add Item', 'url' => ['/store/add-product']],
             Yii::$app->user->isGuest ? ['label' => 'About', 'url' => ['/store/about']] : ['label' => 'View Stock', 'url' => ['/store/view-stock']],
-            Yii::$app->user->isGuest ? ['label' => 'Contact', 'url' => ['/store/contact']] : ['label' => 'Create User', 'url' => ['/store/create-user']],
+            Yii::$app->user->isGuest ? '' : ['label' => 'Cart ( '. $cart .' )', 'url' => ['/store/cart']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/store/login']]
             ) : (

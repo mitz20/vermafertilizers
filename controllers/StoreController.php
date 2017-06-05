@@ -80,6 +80,7 @@ class StoreController extends Controller {
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            Yii::$app->session->set('cart', NULL);
             return $this->goBack();
         }
         return $this->render('login', [
@@ -201,13 +202,13 @@ class StoreController extends Controller {
         ]);
     }
 
-    public function actionViewProductDetails($baseEncodedPid = '') {
-        if (empty(Yii::$app->request->get('__id'))) {
+    public function actionViewProductDetails() {
+        if (empty(Yii::$app->request->get('__pid'))) {
             Yii::$app->session->setFlash('error', 'Product Id could not be retrieved.');
             return $this->redirect(Yii::$app->request->referrer);
         }
         $product = Stock::find()
-                ->where(['product_id' => base64_decode(Yii::$app->request->get('__id'))])
+                ->where(['product_id' => base64_decode(Yii::$app->request->get('__pid'))])
                 ->andWhere(['is_active' => '1'])
                 ->one();
 
@@ -251,6 +252,40 @@ class StoreController extends Controller {
             Yii::$app->session->setFlash('error', 'Incorrect or No data available.');
         }
         return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionUpdateCart() {
+        if (empty(Yii::$app->request->get('__pid')) || empty(Yii::$app->request->get('action'))) {
+            Yii::$app->session->setFlash('error', 'Action cannot be performed. Please try again.');
+            return $this->redirect(Yii::$app->request->referrer);
+        }
+
+        $cartItems = Yii::$app->session->get('cart');
+        if (Yii::$app->request->get('action') == 'add') {
+            if (!in_array(base64_decode(Yii::$app->request->get('__pid')), $cartItems)) {
+                $cartItems[] = base64_decode(Yii::$app->request->get('__pid'));
+                Yii::$app->session->set('cart', $cartItems);
+                Yii::$app->session->setFlash('success', 'Product added to cart.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Product already exists in cart.');
+            }
+        }elseif(Yii::$app->request->get('action') == 'remove'){
+            if (in_array(base64_decode(Yii::$app->request->get('__pid')), $cartItems)) {
+                $key = array_search(base64_decode(Yii::$app->request->get('__pid')), $cartItems);
+                unset($cartItems[$key]);
+                Yii::$app->session->set('cart', $cartItems);
+                Yii::$app->session->setFlash('success', 'Product removed from cart.');
+            } else {
+                Yii::$app->session->setFlash('error', 'Product does not exist in cart.');
+            }
+        }
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    public function actionCart() {
+        echo '<pre>';
+        print_r(Yii::$app->session->get('cart'));
+        die;
     }
 
     public function actionIsPidUnique() {
