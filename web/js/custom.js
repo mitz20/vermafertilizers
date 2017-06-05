@@ -30,5 +30,15 @@ $(document).ready(function (event) {
         }
         return true;
     });
+    
+    $('#product-edit-button').click(function(){
+//        alert();
+        $('#productform-name').removeAttr('disabled');
+        $('#productform-units').removeAttr('disabled');
+        $('#productform-price').removeAttr('disabled');
+        $('#product-edit-button').css('display','none');
+        $('#product-submit-button').removeAttr('style');
+    });
+    
 });
 

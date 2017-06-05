@@ -16,12 +16,22 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="site-about">
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <?php if (Yii::$app->session->hasFlash('success')): ?>
+        <div class="alert alert-success">
+            <?php echo Yii::$app->session['success']; ?>
+        </div>
+    <?php elseif (Yii::$app->session->hasFlash('error')): ?>
+        <div class="alert alert-danger">
+            <?php echo Yii::$app->session['error']; ?>
+        </div>
+    <?php endif; ?>
+
     <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <span class="col-lg-6 adjust-height">
-                    Last updated stock details 
+                        Last updated stock details 
                     </span>
                     <span class="pull-right col-lg-6">
                         <?php
@@ -52,16 +62,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                 <th>Product Name</th>
                                 <th>Units</th>
                                 <th>Price Per Unit</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($models as $key => $model) { ?>
                                 <tr class="<?php echo ($key % 2) ? 'odd gradeA' : 'even gradeA' ?>">
                                     <td class="center"><?= $key + 1 ?></td>
-                                    <td class="center"><?= $model->product_id ?></td>
+                                    <td class="center"><a href="<?= Url::to(['store/view-product-details', '__id' => base64_encode($model->product_id)]); ?>"><?= $model->product_id ?></a></td>
                                     <td class="center"><?= $model->name ?></td>
                                     <td class="center"><?= $model->units ?></td>
                                     <td class="center"><?= $model->price_per_unit ?></td>
+                                    <td class="center"><a class="btn btn-success btn-sm" href="<?= Url::to(['store/view-product-details', '__id' => base64_encode($model->product_id)]); ?>">Add to cart</a></td>
                                 </tr>
                             <?php } ?>
                         </tbody>
