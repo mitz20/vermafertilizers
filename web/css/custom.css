@@ -11,7 +11,11 @@ and open the template in the editor.
   height: 300px;
 }
 .panel-heading {
-    padding: 20px !important;
+    padding: 5px !important;
+    height: 44px !important;
+}
+.adjust-height{
+    margin-top: 7px;
 }
 .main-search {
     margin-right: -20px !important;

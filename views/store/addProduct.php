@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
     ]);
     ?>
 
-    <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
+    <?= $form->field($model, 'name')->textInput(['autofocus' => false]) ?>
     
     <?= $form->field($model, 'product_id')->textInput(['style' => 'text-transform: uppercase']) ?>
 

@@ -20,8 +20,10 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
+                    <span class="col-lg-6 adjust-height">
                     Last updated stock details 
-                    <span class="pull-right">
+                    </span>
+                    <span class="pull-right col-lg-6">
                         <?php
                         $form = ActiveForm::begin([
                                     'id' => 'search-form',

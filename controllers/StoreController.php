@@ -156,19 +156,21 @@ class StoreController extends Controller {
     public function actionViewStock() {
         $search = (Yii::$app->request->get('search')) ? (Yii::$app->request->get('search')) : '';
         $mSearchForm = new SearchForm();
-//        if (Yii::$app->request->post() && $mSearchForm->load(Yii::$app->request->post()) && $mSearchForm->validate()) {
-//            $search = $mSearchForm->search;
-//        }
+        if (Yii::$app->request->post() && $mSearchForm->load(Yii::$app->request->post()) && $mSearchForm->validate()) {
+            $search = $mSearchForm->search;
+        }
         $query = Stock::find()
-//                    ->where(['like', 'product_id', $search])
-//                    ->orWhere(['like', 'name', $search])
-                    ->where(['is_active' => '1']);
-
+                ->where(['like', 'product_id', $search])
+                ->orWhere(['like', 'name', $search])
+                ->andWhere(['is_active' => '1']);
         $countQuery = clone $query;
         $pages = new Pagination([
             'totalCount' => $countQuery->count(),
             'pageSize' => 2,
-//            'params' => ['search' => $search]
+            'params' => [
+                'search' => $search,
+                'page' => Yii::$app->request->get('page'),
+            ],
         ]);
         $models = $query->offset($pages->offset)
                 ->limit($pages->limit)
