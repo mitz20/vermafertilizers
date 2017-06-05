@@ -85,22 +85,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         </tbody>
                     </table>
                     <!-- /.table-responsive -->
-                    <div class="row">
-                        <div class="col-lg-8">
-                            <?php
-                            echo LinkPager::widget([
-                                'pagination' => $pages,
-                                'nextPageLabel' => 'Next',
-                                'prevPageLabel' => 'Previous',
-                                'hideOnSinglePage' => FALSE,
-                                'maxButtonCount' => 10
-                            ]);
-                            ?>
-                        </div>
-                        <div class="col-lg-offset-2 col-lg-2">
-                            <a class="btn btn-warning btn-sm btn-width-md go-to-cart" href="<?= Url::to(['store/cart']); ?>">Go to cart</a>
-                        </div>
-                    </div>
+                    <?php
+                    echo LinkPager::widget([
+                        'pagination' => $pages,
+                        'nextPageLabel' => 'Next',
+                        'prevPageLabel' => 'Previous',
+                        'hideOnSinglePage' => FALSE,
+                        'maxButtonCount' => 10
+                    ]);
+                    ?>
                 </div>
                 <!-- /.panel-body -->
             </div>
