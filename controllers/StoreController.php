@@ -264,14 +264,14 @@ class StoreController extends Controller {
         $count = count($cartItems);
         if (Yii::$app->request->get('action') == 'add') {
             //if empty cart or element doesn't exist in cart
-            if ( (!$count) || ( $count && !in_array(base64_decode(Yii::$app->request->get('__pid')), $cartItems))) {
+            if ((!$count) || ( $count && !in_array(base64_decode(Yii::$app->request->get('__pid')), $cartItems))) {
                 $cartItems[] = base64_decode(Yii::$app->request->get('__pid'));
                 Yii::$app->session->set('cart', $cartItems);
                 Yii::$app->session->setFlash('success', 'Product added to cart.');
             } else {
                 Yii::$app->session->setFlash('error', 'Product already exists in cart.');
             }
-        }elseif(Yii::$app->request->get('action') == 'remove'){
+        } elseif (Yii::$app->request->get('action') == 'remove') {
             //cart should not be empty and product must exist in cart
             if ($count && in_array(base64_decode(Yii::$app->request->get('__pid')), $cartItems)) {
                 $key = array_search(base64_decode(Yii::$app->request->get('__pid')), $cartItems);
@@ -286,9 +286,18 @@ class StoreController extends Controller {
     }
 
     public function actionCart() {
-        echo '<pre>';
-        print_r(Yii::$app->session->get('cart'));
-        die;
+        $products = [];
+        if (Yii::$app->request->isPost) {
+            
+        } else {
+            $productIds = (Yii::$app->session->get('cart')) ? (Yii::$app->session->get('cart')) : [] ;
+            $products = Stock::find()
+                    ->where(['IN', 'product_id', $productIds])
+                    ->all();
+        }
+        return $this->render('cart', [
+            'products' => $products,
+        ]);
     }
 
     public function actionIsPidUnique() {
