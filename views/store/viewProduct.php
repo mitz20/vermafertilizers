@@ -50,7 +50,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-offset-2 col-lg-4">
             <?= Html::button('Edit', ['class' => 'btn btn-primary btn-width', 'id' => 'product-edit-button', 'name' => 'edit-button']) ?>
             <?= Html::submitButton('Submit', ['class' => 'btn btn-primary btn-width', 'id' => 'product-submit-button', 'name' => 'submit-button', "style" => "display:none;"]) ?>
-            <?= Html::button('Add to cart', ['class' => 'btn btn-primary btn-width', 'name' => 'add-to-cart-button']) ?>
         </div>
     </div>
 
