@@ -7,6 +7,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 
+$this->registerJsFile('@web/js/cart-input.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+
 $this->title = 'Cart';
 $this->title = (Yii::$app->session->get('cart')) ? ('Cart ( ' . count(Yii::$app->session->get('cart')) . ' )') : ('Cart');
 $this->params['breadcrumbs'][] = $this->title;
@@ -39,29 +41,51 @@ $colorArray = [
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Product Name</th>
-                                    <th>Price</th>
-                                    <th>Qty</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($products as $key => $product) { ?>
-                                    <tr class="<?php echo $colorArray[$key % 4]; ?>">
-                                        <td><?= $key+1 ?></td>
-                                        <td><?= $product->name ?></td>
-                                        <td><?= $product->price_per_unit ?></td>
-                                        <td>1</td>
+                    <form action="<?= Url::to(['store/cart']) ?>" method="POST" class="form-inline">
+                        <input type="hidden" name="_csrf" value="<?= Yii::$app->request->getCsrfToken() ?>" />
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Product Name</th>
+                                        <th>Price</th>
+                                        <th>Qty</th>
+                                        <th></th>
                                     </tr>
-                                <?php } ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.table-responsive -->
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($products as $key => $product) { ?>
+                                        <tr class="<?php echo $colorArray[$key % 4]; ?>">
+                                            <td><?= $key + 1 ?></td>
+                                            <td><?= $product->name ?></td>
+                                            <td><?= $product->price_per_unit ?></td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-warning btn-number input-xs" data-type="minus" data-field="<?= $product->product_id ?>">
+                                                            <span class="glyphicon glyphicon-minus"></span>
+                                                        </button>
+                                                    </span>
+                                                    <input name="<?= $product->product_id ?>" class="form-control input-number input-xs" value="1" min="1" max="10000" type="text" size="2">
+                                                    <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-success btn-number input-xs" data-type="plus" data-field="<?= $product->product_id ?>">
+                                                            <span class="glyphicon glyphicon-plus"></span>
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <a class="glyphicon glyphicon-remove btn btn-primary btn-sm" href="<?= Url::to(['store/update-cart', '__pid' => base64_encode($product->product_id), 'action' => 'remove']); ?>"></a>
+                                            </td>
+                                        </tr>
+                                    <?php } ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.table-responsive -->
+                        <button class="btn btn-primary btn-sm pull-right" type="submit">Checkout <i class="glyphicon glyphicon-arrow-right" style="color: white"></i></button>
+                    </form>
                 </div>
                 <!-- /.panel-body -->
             </div>

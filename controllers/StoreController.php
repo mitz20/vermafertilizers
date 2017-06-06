@@ -288,7 +288,7 @@ class StoreController extends Controller {
     public function actionCart() {
         $products = [];
         if (Yii::$app->request->isPost) {
-            
+            die('dd');
         } else {
             $productIds = (Yii::$app->session->get('cart')) ? (Yii::$app->session->get('cart')) : [] ;
             $products = Stock::find()

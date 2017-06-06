@@ -8,7 +8,7 @@ and open the template in the editor.
     Author     : mitz
 */
 .carousel .item {
-  height: 300px;
+    height: 300px;
 }
 .panel-heading {
     padding: 5px !important;
@@ -28,4 +28,16 @@ and open the template in the editor.
 }
 th.cart-action {
     text-align: center;
+}
+.input-xs {
+    height: 28px;
+    padding: 2px 5px;
+    font-size: 12px;
+    line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */
+    border-radius: 3px;
+}
+.center{
+    width: 150px;
+    margin: 40px auto;
+
 }
