@@ -30,7 +30,7 @@ th.cart-action {
     text-align: center;
 }
 .input-xs {
-    height: 28px;
+    height: 30px;
     padding: 2px 5px;
     font-size: 12px;
     line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */

@@ -5,7 +5,6 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\bootstrap\ActiveForm;
 
 $this->registerJsFile('@web/js/cart-input.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
 
@@ -36,7 +35,7 @@ $count = count($products);
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
-                    <form action="<?= Url::to(['store/cart']) ?>" method="POST" class="form-inline">
+                    <form id="cart-form" action="<?= Url::to(['store/cart']) ?>" method="POST" class="form-inline">
                         <input type="hidden" name="_csrf" value="<?= Yii::$app->request->getCsrfToken() ?>" />
                         <div class="table-responsive">
                             <table class="table">
@@ -62,7 +61,7 @@ $count = count($products);
                                                             <span class="glyphicon glyphicon-minus"></span>
                                                         </button>
                                                     </span>
-                                                    <input name="<?= $product->product_id ?>" class="form-control input-number input-xs" value="1" min="1" max="10000" type="text" size="2">
+                                                    <input name="<?= $product->product_id ?>" class="form-control input-number input-xs" value="1" min="1" max="100000" type="text" size="3">
                                                     <span class="input-group-btn">
                                                         <button type="button" class="btn btn-success btn-number input-xs" data-type="plus" data-field="<?= $product->product_id ?>">
                                                             <span class="glyphicon glyphicon-plus"></span>
