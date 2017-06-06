@@ -115,15 +115,7 @@ class StoreController extends Controller {
         ]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout() {
-        return $this->render('about');
-    }
-
+    //creates user
     public function actionCreateUser() {
         $mCreateUserForm = new CreateUserForm;
         if (Yii::$app->request->isPost && $mCreateUserForm->load(Yii::$app->request->post()) && $mCreateUserForm->validate()) {
@@ -143,6 +135,7 @@ class StoreController extends Controller {
         ]);
     }
 
+    //adds product with unique product id
     public function actionAddProduct() {
         $mProductForm = new ProductForm();
         if (Yii::$app->request->isPost && $mProductForm->load(Yii::$app->request->post()) && $mProductForm->validate()) {
@@ -172,6 +165,7 @@ class StoreController extends Controller {
         ]);
     }
 
+    //listing of products with option to add to cart
     public function actionViewStock() {
         $search = (Yii::$app->request->get('search')) ? (Yii::$app->request->get('search')) : '';
         $mSearchForm = new SearchForm();
@@ -202,6 +196,7 @@ class StoreController extends Controller {
         ]);
     }
 
+    //detailed product view
     public function actionViewProductDetails() {
         if (empty(Yii::$app->request->get('__pid'))) {
             Yii::$app->session->setFlash('error', 'Product Id could not be retrieved.');
@@ -228,6 +223,7 @@ class StoreController extends Controller {
         ]);
     }
 
+    //updating product details like price, units
     public function actionUpdateProduct() {
         $mProductForm = new ProductForm();
         if (Yii::$app->request->isPost && $mProductForm->load(Yii::$app->request->post()) && $mProductForm->validate()) {
@@ -254,6 +250,7 @@ class StoreController extends Controller {
         return $this->redirect(Yii::$app->request->referrer);
     }
 
+    //adding/removing item to/from cart (session)
     public function actionUpdateCart() {
         if (empty(Yii::$app->request->get('__pid')) || empty(Yii::$app->request->get('action'))) {
             Yii::$app->session->setFlash('error', 'Action cannot be performed. Please try again.');
@@ -285,21 +282,66 @@ class StoreController extends Controller {
         return $this->redirect(Yii::$app->request->referrer);
     }
 
+    //final cart configuration with modification options
     public function actionCart() {
-        $products = [];
+        $productIds = (Yii::$app->session->get('cart')) ? (Yii::$app->session->get('cart')) : [];
+        $products = Stock::find()
+                ->where(['IN', 'product_id', $productIds])
+                ->all();
         if (Yii::$app->request->isPost) {
-            die('dd');
-        } else {
-            $productIds = (Yii::$app->session->get('cart')) ? (Yii::$app->session->get('cart')) : [] ;
-            $products = Stock::find()
-                    ->where(['IN', 'product_id', $productIds])
-                    ->all();
+            $post = Yii::$app->request->post();
+            $finalProductList = [];
+            $totalCost = 0;
+            foreach ($products as $key => $value) {
+                if($value->units >= $post[$value->product_id]){
+                    $finalProductList[$key]['product_id'] = $value->product_id;
+                    $finalProductList[$key]['name'] = $value->name;
+                    $finalProductList[$key]['price_per_unit'] = $value->price_per_unit;
+                    $finalProductList[$key]['quantity'] = $post[$value->product_id];
+                    $totalCost += ($finalProductList[$key]['quantity'] * $finalProductList[$key]['price_per_unit']);
+                }
+            }
+            Yii::$app->session->set('products', $finalProductList);
+            Yii::$app->session->set('cost', $totalCost);
+            return $this->render('cartReview', [
+                'products' => $finalProductList,
+                'totalCost' => $totalCost
+            ]);
         }
         return $this->render('cart', [
-            'products' => $products,
+                    'products' => $products,
         ]);
     }
+    
+    //update db , generate bill, reset sessions
+    public function actionGenerateBill(){
+        $finalProducts = Yii::$app->session->get('products');
+        if(!$finalProducts){
+            Yii::$app->session->setFlash('error', 'Add product to cart first.');
+            return $this->redirect(['store/view-stock']);
+        }
+        $totalCost = 0;
+        foreach ($finalProducts as $value) {
+            $product = Stock::find()
+                    ->where(['product_id' => $value['product_id']])
+                    ->one();
+            $product->units -= $value['quantity'] ;
+            $product->save();
+            unset($product);
+            $totalCost += ($value['quantity']*$value['price_per_unit']);
+        }
+        
+        if($totalCost == (Yii::$app->session->get('cost'))){
+            //generate bill pdf
+            //reset session vars
+            //redirect back
+        }
+        echo '<pre>';print_r(Yii::$app->session->get('cost'));die;
+    }
+    
+    
 
+    //to check uniqueness of product_id before product addition through ajax
     public function actionIsPidUnique() {
         $mProductForm = new ProductForm();
         if (Yii::$app->request->isAjax && $mProductForm->load(Yii::$app->request->post()) && $mProductForm->validate()) {
@@ -312,7 +354,8 @@ class StoreController extends Controller {
         print_r('1');
         die;
     }
-
+    
+    //to check uniqueness of username before create user through ajax
     public function actionIsUsernameUnique() {
         $mCreateUserForm = new CreateUserForm();
         if (Yii::$app->request->isAjax && $mCreateUserForm->load(Yii::$app->request->post()) && $mCreateUserForm->validate()) {

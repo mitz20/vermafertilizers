@@ -13,12 +13,7 @@ $this->title = 'Cart';
 $this->title = (Yii::$app->session->get('cart')) ? ('Cart ( ' . count(Yii::$app->session->get('cart')) . ' )') : ('Cart');
 $this->params['breadcrumbs'][] = $this->title;
 
-$colorArray = [
-    '0' => 'success',
-    '1' => 'info',
-    '2' => 'warning',
-    '3' => 'danger',
-];
+$count = count($products);
 ?>
 <div class="site-login">
     <h1><?= Html::encode($this->title) ?></h1>
@@ -37,7 +32,7 @@ $colorArray = [
         <div class="col-lg-12">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Context Classes
+                    <div class="col-lg-4">Modify Cart</div>
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
@@ -49,14 +44,14 @@ $colorArray = [
                                     <tr>
                                         <th>#</th>
                                         <th>Product Name</th>
-                                        <th>Price</th>
-                                        <th>Qty</th>
+                                        <th>Price Per Unit</th>
+                                        <th>Quantity</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($products as $key => $product) { ?>
-                                        <tr class="<?php echo $colorArray[$key % 4]; ?>">
+                                        <tr>
                                             <td><?= $key + 1 ?></td>
                                             <td><?= $product->name ?></td>
                                             <td><?= $product->price_per_unit ?></td>
@@ -76,7 +71,7 @@ $colorArray = [
                                                 </div>
                                             </td>
                                             <td>
-                                                <a class="glyphicon glyphicon-remove btn btn-primary btn-sm" href="<?= Url::to(['store/update-cart', '__pid' => base64_encode($product->product_id), 'action' => 'remove']); ?>"></a>
+                                                <a class="glyphicon glyphicon-remove btn btn-danger btn-sm" href="<?= Url::to(['store/update-cart', '__pid' => base64_encode($product->product_id), 'action' => 'remove']); ?>"></a>
                                             </td>
                                         </tr>
                                     <?php } ?>
@@ -84,7 +79,9 @@ $colorArray = [
                             </table>
                         </div>
                         <!-- /.table-responsive -->
-                        <button class="btn btn-primary btn-sm pull-right" type="submit">Checkout <i class="glyphicon glyphicon-arrow-right" style="color: white"></i></button>
+                        <?php if ($count) { ?>
+                            <button class="btn btn-primary btn-sm pull-right" type="submit">Checkout <i class="glyphicon glyphicon-arrow-right" style="color: white"></i></button>
+                        <?php } ?>
                     </form>
                 </div>
                 <!-- /.panel-body -->

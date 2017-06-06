@@ -42,7 +42,7 @@ AppAsset::register($this);
             ['label' => 'Home', 'url' => ['/store/index']],
             Yii::$app->user->isGuest ? ['label' => 'Contact', 'url' => ['/store/contact']] : ['label' => 'Create User', 'url' => ['/store/create-user']],
             Yii::$app->user->isGuest ? '' : ['label' => 'Add Item', 'url' => ['/store/add-product']],
-            Yii::$app->user->isGuest ? ['label' => 'About', 'url' => ['/store/about']] : ['label' => 'View Stock', 'url' => ['/store/view-stock']],
+            Yii::$app->user->isGuest ? '' : ['label' => 'View Stock', 'url' => ['/store/view-stock']],
             Yii::$app->user->isGuest ? '' : ['label' => 'Cart ( '. $cart .' )', 'url' => ['/store/cart']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/store/login']]
