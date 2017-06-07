@@ -332,6 +332,7 @@ class StoreController extends Controller {
         }
         
         if($totalCost == (Yii::$app->session->get('cost'))){
+            return $this->render('invoice');
             //generate bill pdf
             //reset session vars
             //redirect back
